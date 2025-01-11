@@ -34,7 +34,7 @@ GLuint triangleVao;   // mesh/attribute descriptor handle
 GLuint triangleVbo;   // handle to OpenGL copy of buffer
 
 void createGeometry() {
-	float points[] = {
+	const float points[] = {
 		 0.0f,  0.5f,  0.0f,
 		 0.5f, -0.5f,  0.0f,
 		-0.5f, -0.5f,  0.0f
@@ -51,7 +51,7 @@ void createGeometry() {
 }
 
 
-void endApp(OpenGlEnvironment *glEnv, ShaderProgram* shaderProgram) {
+void done(OpenGlEnvironment *glEnv, ShaderProgram* shaderProgram) {
 	glDeleteVertexArrays(1, &triangleVao);
 	glDeleteBuffers(1, &triangleVbo);
     FreeShaderProgram(shaderProgram);
@@ -60,7 +60,7 @@ void endApp(OpenGlEnvironment *glEnv, ShaderProgram* shaderProgram) {
 
 
 int main(int argc, char *argv[]) {
-	RandomSeed(1782468, 127486);
+	RandomSeed(1782467, 127486);
 	LogInit();
 	LogSetLevel(LOG_DEBUG);
 	OpenGlEnvironment *glEnv = StartOpenGl(windowDef);
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 	createGeometry();
 	const char *vertexShaderFilenames[] = {"shaders/shader.vert", NULL};
 	const char *fragmentShaderFilenames[] = {"shaders/shader.frag", NULL};
-	ShaderProgram* shaderProgram = BuildShader(vertexShaderFilenames, fragmentShaderFilenames);
+	ShaderProgram* shaderProgram = BuildShaderProgram(vertexShaderFilenames, fragmentShaderFilenames);
 	if (!shaderProgram) {
 		EndOpenGl(glEnv);
 		return 2;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 		glUseProgram(0);
 		SDL_GL_SwapWindow(glEnv->window);
 	}
-	endApp(glEnv, shaderProgram);
+	done(glEnv, shaderProgram);
 	LogEnd();
 	return 0;
 }

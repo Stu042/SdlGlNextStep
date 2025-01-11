@@ -41,9 +41,9 @@ extern void LogWarn(const char *szFormat, ...);
 extern void LogError(const char *szFormat, ...);
 extern void LogFatal(const char *szFormat, ...);
 
-extern void LogGLDebug(const char *format, ...);			// log gl error only if in debug mode
+extern void LogGLDebug(const char* format, ...);			// log gl error only if in debug mode
 extern void LogGL(const char *format, ...);
-extern void LogGLParams(void);						// gonna move this...
+extern void LogGLParams();									// gonna move this...
 
 // Log a GL error IF in debug mode and file name and line nbr
 extern void LogGLDebugFL(const char *file, int line, const char *format, ...);

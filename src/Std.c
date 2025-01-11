@@ -3,7 +3,7 @@
 //
 #include <stddef.h>
 #include <stdlib.h>
-#include<sys/time.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include "Log.h"
 
@@ -26,15 +26,16 @@ long long TimeInMilliseconds() {
 }
 
 
-void Timestamp(char *out, int maxLength) {
+// maxLength should be at least 16
+void Timestamp(char* out, const int maxLength) {
 	struct timeval tv;
 	gettimeofday(&tv,NULL);
 	long long time = tv.tv_sec;
-	long seconds = time % 60;
+	const long seconds = time % 60;
 	time /= 60;
-	long minutes = time % 60;
+	const long minutes = time % 60;
 	time /= 60;
-	long hours = time % 24;
+	const long hours = time % 24;
 	snprintf(out, maxLength, "%02ld:%02ld:%02ld.%ld", hours, minutes, seconds, tv.tv_usec);
 }
 

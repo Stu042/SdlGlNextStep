@@ -15,7 +15,7 @@ typedef struct {
 // free a shader program and all attached shaders
 extern void FreeShaderProgram(ShaderProgram* shaderProgram);
 
-extern ShaderProgram *BuildShader(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]);
+extern ShaderProgram *BuildShaderProgram(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]);
 
 
 #endif //OPENGLTEST_SHADERS_H

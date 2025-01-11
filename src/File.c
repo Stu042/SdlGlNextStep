@@ -8,7 +8,7 @@
 #include "Std.h"
 
 
-// adds one to file size to allow for \0 terminator
+// adds one to file size to allow for \0 terminator.
 long getFileSize(FILE *stream) {
 	fseek(stream, 0L, SEEK_END);
 	long fileSize = ftell(stream);
@@ -39,9 +39,9 @@ const char *ReadFile(const char *fileName) {
 		LogError("Failed to open file `%s`\n", fileName);
 		return NULL;
 	}
-	long fileSize = getFileSize(stream);
+	const long fileSize = getFileSize(stream);
 	char *buffer = (char *) Alloc(fileSize);
-	size_t readSize = fread(buffer, sizeof(*buffer), fileSize, stream);
+	const size_t readSize = fread(buffer, sizeof(*buffer), fileSize, stream);
 	buffer[readSize] = '\0';
 	fclose(stream);
 	return buffer;
@@ -59,7 +59,7 @@ const char **ReadFiles(const char **filenames) {
 		LogError("Asked to read files from an empty array of filenames");
 		return NULL;
 	}
-	int count = CountStringPtrArraySize(filenames);
+	const int count = CountStringPtrArraySize(filenames);
 	const char **curFilename = filenames;
 	const char **files = (const char **) Alloc(sizeof(char *) * (count + 1));
 	const char **curFile = files;

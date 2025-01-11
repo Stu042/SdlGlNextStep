@@ -8,6 +8,10 @@
 #include <bits/stdint-intn.h>
 
 
+#define MAX_TIMESTAMP_LENGTH (16)
+// timestamp formatted as: XX:XX:XX.000001
+
+
 typedef unsigned int uint;
 
 typedef uint8_t uint8;

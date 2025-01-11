@@ -12,7 +12,7 @@
 
 // create the shader program and link the vertex and fragment shaders
 ShaderProgram *buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShaderHandle) {
-	GLuint glShaderProgram = glCreateProgram();
+	const GLuint glShaderProgram = glCreateProgram();
 	if (glShaderProgram == 0) {
 		LogError("Failed glCreateProgram %u", glShaderProgram);
 		return 0;
@@ -35,8 +35,8 @@ ShaderProgram *buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShad
 
 
 GLuint compileShader(const char *shaderContents[], GLuint shaderType) {
-	int shaderSrcCount = CountStringPtrArraySize(shaderContents);
-	GLuint shaderHandle = glCreateShader(shaderType);
+	const int shaderSrcCount = CountStringPtrArraySize(shaderContents);
+	const GLuint shaderHandle = glCreateShader(shaderType);
 	glShaderSource(shaderHandle, shaderSrcCount, shaderContents, NULL);
 	glCompileShader(shaderHandle);
 	if (CheckErrorGL(shaderHandle, ErrorType_ShaderCompile)) {
@@ -50,7 +50,7 @@ GLuint compileShader(const char *shaderContents[], GLuint shaderType) {
 
 GLuint compileShaderHandle(const char *shaderFilenames[], GLuint shaderType) {
 	const char **shaderSrc = ReadFiles(shaderFilenames);
-	GLuint shaderHandle = compileShader((const char **)shaderSrc, shaderType);
+	const GLuint shaderHandle = compileShader((const char **)shaderSrc, shaderType);
 	FreeFiles(shaderSrc);
 	if (shaderHandle == 0) {
 		LogError("Failed compiling shader");
@@ -66,13 +66,13 @@ GLuint compileShaderHandle(const char *shaderFilenames[], GLuint shaderType) {
 
 
 // must be sent a null terminated array of filenames for each parameter
-ShaderProgram *BuildShader(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]) {
-	GLuint vertShaderHandle = compileShaderHandle(vertexShaderFilenames, GL_VERTEX_SHADER);
+ShaderProgram *BuildShaderProgram(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]) {
+	const GLuint vertShaderHandle = compileShaderHandle(vertexShaderFilenames, GL_VERTEX_SHADER);
 	if (vertShaderHandle == 0) {
 		LogError("Failed compiling vertex shader");
 		return NULL;
 	}
-	GLuint fragShaderHandle = compileShaderHandle(fragmentShaderFilenames, GL_FRAGMENT_SHADER);
+	const GLuint fragShaderHandle = compileShaderHandle(fragmentShaderFilenames, GL_FRAGMENT_SHADER);
 	if (fragShaderHandle == 0) {
 		glDeleteShader(vertShaderHandle);
 		LogError("Failed compiling fragment shader");
