@@ -9,7 +9,7 @@
 #include "Std.h"
 
 
-bool initGL(NewWindow windowDefinition, SDL_Window *window) {
+bool initGL(NewWindow windowDefinition) {
 	GLenum error = GL_NO_ERROR;
 	if (windowDefinition.depthBuffer) {
 		glEnable(GL_DEPTH_TEST);
@@ -45,7 +45,7 @@ void setGlAttributes(SdlGlAttribute attributes[]) {
 }
 
 
-OpenGlEnvironment *StartOpenGl(NewWindow windowDefinition) {
+OpenGlEnvironment *StartOpenGl(const NewWindow windowDefinition) {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		LogFatal("SDL could not initialize! SDL Error: %s", SDL_GetError());
 		return NULL;
@@ -76,7 +76,7 @@ OpenGlEnvironment *StartOpenGl(NewWindow windowDefinition) {
 	if (SDL_GL_SetSwapInterval(1) < 0) {
 		LogError("Warning: Unable to set VSync. SDL Error: %s", SDL_GetError());
 	}
-	if (!initGL(windowDefinition, glEnv->window)) {
+	if (!initGL(windowDefinition)) {
 		LogFatal("Unable to initialize OpenGL!");
 		EndOpenGl(glEnv);
 		return NULL;
@@ -105,7 +105,7 @@ void EndOpenGl(OpenGlEnvironment *glEnv) {
 
 
 GpuMemoryInfo *GetGpuMemInfo() {
-	GpuMemoryInfo *memInfo = (GpuMemoryInfo *) Alloc(sizeof(GpuMemoryInfo));
+	GpuMemoryInfo *memInfo = Alloc(sizeof(GpuMemoryInfo));
 	memInfo->dedicatedVideoMemory = 0;
 	glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &(memInfo->dedicatedVideoMemory));
 	memInfo->totalVideoMemory = 0;
@@ -125,7 +125,7 @@ void FreeGpuMemInfo(GpuMemoryInfo *memInfo) {
 }
 
 
-bool CheckErrorGL(GLuint item, ErrorType errorType) {
+bool CheckErrorGL(const GLuint item, const ErrorType errorType) {
 	int params = -1;
 	switch (errorType) {
 		case ErrorType_ShaderCompile:

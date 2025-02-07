@@ -7,7 +7,7 @@
 
 
 
-typedef enum LogLevel {
+typedef enum LOG_LEVEL {
     LOG_UNKNOWN,
     LOG_DEBUG,
     LOG_INFO,
@@ -15,7 +15,7 @@ typedef enum LogLevel {
     LOG_ERROR,
     LOG_FATAL,
     LOG_LEVEL_COUNT
-}LOGLEVEL;
+}LogLevel;
 
 
 extern const char APP_NAME[];
@@ -23,17 +23,17 @@ extern const char APP_VERSION[];
 
 
 extern void LogInit(void);									/* Initialises logging. */
-extern void LogSetLevel(LOGLEVEL level);					/* request a specific level of logging */
+extern void LogSetLevel(LogLevel level);					/* request a specific level of logging */
 extern void LogEnd(void);									/* Close logging */
 
 extern int LogIsDebug(void);								/* true if we are in debug loglevel (or deeper, currently debug is deepest level). */
 
-extern void LogStart(LOGLEVEL level, const char *file, int line);		// output the start of a log line
-extern void LogDescription(LOGLEVEL level, const char *format, ...);	// log the descript part of the line
-extern void LogStartDescription(LOGLEVEL level, const char *file, int line, const char *format, ...);
+extern void LogStart(LogLevel level, const char *file, int line);		// output the start of a log line
+extern void LogDescription(LogLevel level, const char *format, ...);	// log the descript part of the line
+extern void LogStartDescription(LogLevel level, const char *file, int line, const char *format, ...);
 
 // log a message
-extern void Log(LOGLEVEL level, const char *szFormat, ...);
+extern void Log(LogLevel level, const char *szFormat, ...);
 
 extern void LogDebug(const char *szFormat, ...);
 extern void LogInfo(const char *szFormat, ...);

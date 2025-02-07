@@ -1,21 +1,22 @@
 //
 // Created by stu on 27/07/23.
 //
-#ifndef OPENGLTEST_SHADERS_H
-#define OPENGLTEST_SHADERS_H
+#ifndef SHADERS_H
+#define SHADERS_H
 
 
-typedef struct {
+typedef struct SHADER_PROGRAM {
 	GLuint vertex;
 	GLuint fragment;
 	GLuint program;
-}ShaderProgram;
+} ShaderProgram;
 
 
 // free a shader program and all attached shaders
 extern void FreeShaderProgram(ShaderProgram* shaderProgram);
 
-extern ShaderProgram *BuildShaderProgram(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]);
+// Must be sent a null terminated array of filenames for each parameter
+extern ShaderProgram* BuildShaderProgram(const char* vertexShaderFilenames[], const char* fragmentShaderFilenames[]);
 
 
-#endif //OPENGLTEST_SHADERS_H
+#endif //SHADERS_H

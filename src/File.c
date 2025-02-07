@@ -11,7 +11,7 @@
 // adds one to file size to allow for \0 terminator.
 long getFileSize(FILE *stream) {
 	fseek(stream, 0L, SEEK_END);
-	long fileSize = ftell(stream);
+	const long fileSize = ftell(stream);
 	fseek(stream, 0L, SEEK_SET);
 	return fileSize + 1;
 }
@@ -61,7 +61,7 @@ const char **ReadFiles(const char **filenames) {
 	}
 	const int count = CountStringPtrArraySize(filenames);
 	const char **curFilename = filenames;
-	const char **files = (const char **) Alloc(sizeof(char *) * (count + 1));
+	const char **files = Alloc(sizeof(char *) * (count + 1));
 	const char **curFile = files;
 	for (int i = 0; i < count; i++) {
 		*curFile++ = ReadFile(*curFilename++);

@@ -9,9 +9,20 @@
 #include "OpenGL.h"
 #include "Std.h"
 
+/* Shaders
+ *
+ * Loads text files, compiles them as vertex and fragment shaders
+ * and links them into a shader program.
+ *
+ * In theory a vertex or fragment shader could be used multiple times
+ * in different programs, so we have an inefficiency here, but this is
+ * easier to code and the difference in operation should be very small,
+ * a little extra compilation maybe a bit extra VRam used.
+ */
+
 
 // create the shader program and link the vertex and fragment shaders
-ShaderProgram *buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShaderHandle) {
+ShaderProgram* buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShaderHandle) {
 	const GLuint glShaderProgram = glCreateProgram();
 	if (glShaderProgram == 0) {
 		LogError("Failed glCreateProgram %u", glShaderProgram);
@@ -26,7 +37,7 @@ ShaderProgram *buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShad
 		glDeleteProgram(glShaderProgram);
 		return 0;
 	}
-	ShaderProgram *shaderProgram = (ShaderProgram *) Alloc(sizeof(ShaderProgram));
+	ShaderProgram* shaderProgram = Alloc(sizeof(ShaderProgram));
 	shaderProgram->vertex = vertexShaderHandle;
 	shaderProgram->fragment = fragmentShaderHandle;
 	shaderProgram->program = glShaderProgram;
@@ -34,7 +45,7 @@ ShaderProgram *buildShaderProgram(GLuint vertexShaderHandle, GLuint fragmentShad
 }
 
 
-GLuint compileShader(const char *shaderContents[], GLuint shaderType) {
+GLuint compileShader(const char* shaderContents[], GLuint shaderType) {
 	const int shaderSrcCount = CountStringPtrArraySize(shaderContents);
 	const GLuint shaderHandle = glCreateShader(shaderType);
 	glShaderSource(shaderHandle, shaderSrcCount, shaderContents, NULL);
@@ -48,9 +59,9 @@ GLuint compileShader(const char *shaderContents[], GLuint shaderType) {
 }
 
 
-GLuint compileShaderHandle(const char *shaderFilenames[], GLuint shaderType) {
-	const char **shaderSrc = ReadFiles(shaderFilenames);
-	const GLuint shaderHandle = compileShader((const char **)shaderSrc, shaderType);
+GLuint compileShaderHandle(const char* shaderFilenames[], GLuint shaderType) {
+	const char** shaderSrc = ReadFiles(shaderFilenames);
+	const GLuint shaderHandle = compileShader(shaderSrc, shaderType);
 	FreeFiles(shaderSrc);
 	if (shaderHandle == 0) {
 		LogError("Failed compiling shader");
@@ -60,13 +71,12 @@ GLuint compileShaderHandle(const char *shaderFilenames[], GLuint shaderType) {
 }
 
 
-/***********************************
- * global functions
- */
+// ////////////////
+// global functions
 
 
-// must be sent a null terminated array of filenames for each parameter
-ShaderProgram *BuildShaderProgram(const char *vertexShaderFilenames[], const char *fragmentShaderFilenames[]) {
+
+ShaderProgram* BuildShaderProgram(const char* vertexShaderFilenames[], const char* fragmentShaderFilenames[]) {
 	const GLuint vertShaderHandle = compileShaderHandle(vertexShaderFilenames, GL_VERTEX_SHADER);
 	if (vertShaderHandle == 0) {
 		LogError("Failed compiling vertex shader");
@@ -89,7 +99,7 @@ ShaderProgram *BuildShaderProgram(const char *vertexShaderFilenames[], const cha
 }
 
 
-void FreeShaderProgram(ShaderProgram *shaderProgram) {
+void FreeShaderProgram(ShaderProgram* shaderProgram) {
 	if (shaderProgram == NULL) {
 		LogError("Asked to free null shader program");
 		return;

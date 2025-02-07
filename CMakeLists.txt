@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 project(OpenGlSdl)
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 
 
 find_package(SDL2 REQUIRED)

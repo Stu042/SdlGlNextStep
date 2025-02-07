@@ -6,13 +6,13 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include "Log.h"
-
+#include "Errors.h"
 
 void *Alloc(size_t memSize) {
 	void *mem = malloc(memSize);
 	if (mem == NULL) {
 		LogFatal("Unable to allocate memory...\n\tDaisy, Daisy, give mee yooouur aaansweeeer doooooo... ");
-		exit(-1);
+		exit(E_OUT_OF_MEMORY);
 	}
 	return mem;
 }
@@ -26,7 +26,7 @@ long long TimeInMilliseconds() {
 }
 
 
-// maxLength should be at least 16
+// maxLength must be at least 16 bytes
 void Timestamp(char* out, const int maxLength) {
 	struct timeval tv;
 	gettimeofday(&tv,NULL);

@@ -33,11 +33,13 @@ const NewWindow windowDef = {
 GLuint triangleVao;   // mesh/attribute descriptor handle
 GLuint triangleVbo;   // handle to OpenGL copy of buffer
 
+// The main `ugly` function for now, we just need a shape,
+// in future we should get it from a file, ideally a 3d object file.
 void createGeometry() {
 	const float points[] = {
-		 0.0f,  0.5f,  0.0f,
-		 0.5f, -0.5f,  0.0f,
-		-0.5f, -0.5f,  0.0f
+		 0.0f,  1.0f,  0.0f,
+		 1.0f, -1.0f,  0.0f,
+		-1.0f, -1.0f,  0.0f
 	};
 	glGenVertexArrays(1, &triangleVao);
 	glGenBuffers(1, &triangleVbo);

@@ -7,27 +7,26 @@
 #include <GL/glew.h>
 #include "Log.h"
 #include "Std.h"
-
-
-
-
-FILE* LogFile;                   /* The File For Error Logging */
-LOGLEVEL LogLevel = LOG_UNKNOWN; /* Level of logging */
+#include "Errors.h"
 
 
 const char APP_NAME[] = "OpenGlSdl";
 const char APP_VERSION[] = "0.1";
 const char* LOG_FILE_PATHNAME = "OpenGlSdl.log";
 
-
 const char* LogLevelStr[LOG_LEVEL_COUNT] = {"UNKNOWN LOG LEVEL: ", "DEBUG: ", "INFO: ", "WARN: ", "ERROR: ", "FATAL: "};
+
+
+FILE* logFile;                   /* The File For Error Logging */
+LogLevel logLevel = LOG_UNKNOWN; /* Level of logging */
+
 
 
 /* Initializes Error Logging. */
 void LogInit() {
-	if (!((LogFile = fopen(LOG_FILE_PATHNAME, "w")))) { /* If We Can't Open LOG_FILE For Writing */
+	if (!((logFile = fopen(LOG_FILE_PATHNAME, "w")))) { /* If We Can't Open LOG_FILE For Writing */
 		perror("Can't init Logfile!");                  /* Report With perror() (Standard + Explains Cause Of The Error) */
-		exit(EXIT_FAILURE);                             /* And Exit, This Is Critical, We Want Logging */
+		exit(E_NO_LOGGING);                             /* And Exit, This Is Critical, We Want Logging */
 	}
 	LogInfo("%s V%s -- Log Init...", APP_NAME, APP_VERSION); /* Print The Name Of The App In The Log */
 }
@@ -36,55 +35,55 @@ void LogInit() {
 /* Closes Error Logging */
 void LogEnd() {
 	LogInfo("...Closing Log\n"); /* Print The End Mark */
-	if (NULL != LogFile) {       /* If The File Is Open */
-		fclose(LogFile);         /* Close It */
-		LogFile = NULL;          /* be safe */
+	if (NULL != logFile) {       /* If The File Is Open */
+		fclose(logFile);         /* Close It */
+		logFile = NULL;          /* be safe */
 	}
 }
 
 
 // output the start of a log line
-void LogStart(const LOGLEVEL level, const char* file, int line) {
-	if ((LogLevel <= level) && LogFile) {
+void LogStart(const LogLevel level, const char* file, int line) {
+	if ((logLevel <= level) && logFile) {
 		char time[MAX_TIMESTAMP_LENGTH];
 		Timestamp(time, MAX_TIMESTAMP_LENGTH);
-		fprintf(LogFile, "%s %sFile: %s, Line %d, ", time, LogLevelStr[level], file, line);
+		fprintf(logFile, "%s %sFile: %s, Line %d, ", time, LogLevelStr[level], file, line);
 	}
 }
 
 // log the description part of the line
-void LogDescription(const LOGLEVEL level, const char* format, ...) {
-	if ((LogLevel <= level) && LogFile) {
+void LogDescription(const LogLevel level, const char* format, ...) {
+	if ((logLevel <= level) && logFile) {
 		va_list args;
 		va_start(args, format);
-		vfprintf(LogFile, format, args);
+		vfprintf(logFile, format, args);
 		va_end(args);
-		fputc('\n', LogFile);
-		fflush(LogFile);
+		fputc('\n', logFile);
+		fflush(logFile);
 	}
 }
 
-void LogStartDescription(const LOGLEVEL level, const char* file, const int line, const char* format, ...) {
+void LogStartDescription(const LogLevel level, const char* file, const int line, const char* format, ...) {
 	LogStart(level, file, line);
-	if ((LogLevel <= level) && LogFile) {
+	if ((logLevel <= level) && logFile) {
 		va_list args;
 		va_start(args, format);
-		vfprintf(LogFile, format, args);
+		vfprintf(logFile, format, args);
 		va_end(args);
-		fputc('\n', LogFile);
-		fflush(LogFile);
+		fputc('\n', logFile);
+		fflush(logFile);
 	}
 }
 
 
-void LogVA(const LOGLEVEL level, const char* szFormat, va_list arg) {
+void LogVA(const LogLevel level, const char* szFormat, va_list arg) {
 	//va_list a = arg;
 	char time[MAX_TIMESTAMP_LENGTH];
 	Timestamp(time, MAX_TIMESTAMP_LENGTH);
-	fprintf(LogFile, "%s %s", time, LogLevelStr[level]);
-	vfprintf(LogFile, szFormat, arg);
-	fputc('\n', LogFile);
-	fflush(LogFile);
+	fprintf(logFile, "%s %s", time, LogLevelStr[level]);
+	vfprintf(logFile, szFormat, arg);
+	fputc('\n', logFile);
+	fflush(logFile);
 	//if (LogLevel == LOG_DEBUG) {
 	//	vprintf(szFormat, arg);
 	//	fputc('\n', stdout);
@@ -94,79 +93,79 @@ void LogVA(const LOGLEVEL level, const char* szFormat, va_list arg) {
 
 
 /* Add A Line To The Log */
-void Log(const LOGLEVEL level, const char* szFormat, ...) {
+void Log(const LogLevel level, const char* szFormat, ...) {
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
 	if (LOG_FATAL == level) {
-		exit(EXIT_FAILURE);
+		exit(E_UNKNOWN);
 	}
 }
 
 void LogDebug(const char* szFormat, ...) {
-	const LOGLEVEL level = LOG_DEBUG;
+	const LogLevel level = LOG_DEBUG;
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
 }
 
 void LogInfo(const char* szFormat, ...) {
-	const LOGLEVEL level = LOG_INFO;
+	const LogLevel level = LOG_INFO;
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
 }
 
 void LogWarn(const char* szFormat, ...) {
-	const LOGLEVEL level = LOG_WARN;
+	const LogLevel level = LOG_WARN;
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
 }
 
 void LogError(const char* szFormat, ...) {
-	const LOGLEVEL level = LOG_ERROR;
+	const LogLevel level = LOG_ERROR;
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
 }
 
 void LogFatal(const char* szFormat, ...) {
-	const LOGLEVEL level = LOG_FATAL;
+	const LogLevel level = LOG_FATAL;
 	va_list arg;                          /* We're Using The Same As The printf() Family, A va_list */
 	va_start(arg, szFormat);              /* We Start The List */
-	if ((LogLevel <= level) && LogFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
+	if ((logLevel <= level) && logFile) { /* If The Log Is Open and requested to log in a level we are accepting... */
 		LogVA(level, szFormat, arg);      /* And Ensure The Line Is Written, The Log Must Be Quick */
 	}
 	va_end(arg); /* We End The List */
-	exit(EXIT_FAILURE);
+	exit(E_UNKNOWN);
 }
 
 
-void LogSetLevel(LOGLEVEL level) {
+void LogSetLevel(LogLevel level) {
 	if ((level > LOG_UNKNOWN) && (level < LOG_LEVEL_COUNT)) {
-		LogLevel = level;
+		logLevel = level;
 	}
 }
 
 
 int LogIsDebug(void) {
-	return LogLevel == LOG_DEBUG;
+	return logLevel == LOG_DEBUG;
 }
 
 
@@ -248,7 +247,7 @@ void LogGlVa(const char* format, va_list args) {
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		char buffer[256];
-		LOGLEVEL level;
+		LogLevel level;
 		if (error == GL_OUT_OF_MEMORY) {
 			level = LOG_FATAL;
 		} else {
@@ -285,7 +284,7 @@ void LogGlVaDescription(const char* format, va_list args) {
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		char buffer[256];
-		LOGLEVEL level;
+		LogLevel level;
 		if (error != GL_OUT_OF_MEMORY) {
 			level = LOG_FATAL;
 		} else {
@@ -302,7 +301,7 @@ void LogGLDebugFL(const char* file, int line, const char* format, ...) {
 	if (LogIsDebug()) {
 		const GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
-			LOGLEVEL level;
+			LogLevel level;
 			va_list args;
 			va_start(args, format);
 			LogStart(LOG_WARN, file, line);
@@ -329,7 +328,7 @@ void LogGLDebugFL(const char* file, int line, const char* format, ...) {
 void LogGlFl(const char* file, int line, const char* format, ...) {
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
-		LOGLEVEL level;
+		LogLevel level;
 		va_list args;
 		va_start(args, format);
 		LogStart(LOG_WARN, file, line);
